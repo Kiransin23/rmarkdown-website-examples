@@ -1,0 +1,192 @@
+---
+title: "Bus Profiles"
+output: 
+  flexdashboard::flex_dashboard:
+    runtime: shiny
+    orientation: row
+    vertical_layout: scroll
+    runtime: shiny 
+   
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(flexdashboard)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(shiny)
+library(stringr) 
+library(corrplot)
+library(rsconnect)
+library(rmarkdown)
+
+df1 <- read.csv("https://raw.githubusercontent.com/Kiransin23/cept_analytics/main/Dataset.csv")
+
+```
+
+# Year Profile {data-icon="fa-bus"}
+
+## Input {.sidebar}
+
+```{r, echo=FALSE}
+selectInput("Year", label = "Year :", choices = c(df1$Year), selected = "2016")
+```
+
+Row {data-width = 650}
+-------------------------------------
+
+### Financial Expenditure
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(FIN_expenditure_School_bus))
+  valueBox(value = A, icon = "", caption = "USD", color = "Orange")
+  })
+```
+
+### Inventory of Vehicles
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Inventory_No_of_vehicles_all_buses))
+  valueBox(value = A, icon = "", caption = "Number of All Buses", color = "Black")  
+})
+```
+
+### Performance Vehicle Miles all Buses
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Perf_Vehicle_miles_all_buses.million.))
+  valueBox(value = A, icon = "", caption = "No Buses Million", color = "green")  
+})
+```
+
+### Perf Rural Hw
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Perf_Rural_highway_total))
+  valueBox(value = A, icon = "", caption = "Rural Bus Vehicle Miles", color = "blue")  
+})
+```
+
+Row {data-width = 300}
+-------------------------------------
+### Perf Urban HW
+
+```{r, echo=FALSE}
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Perf_Urban_highway_total))
+  valueBox(value = A, icon = "", caption = "Urban Bus Vehicle Miles", color = "blue")  
+})
+```
+
+### Passenger Miles (All Buses)
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  B <- as.character(df1  %>% filter(Year == input$Year) %>% select(Passenger_miles_millions_all_buses))
+  valueBox(value = B, icon = "", caption = "Passenger Miles (All Buses)", color = "grey")  
+})
+```
+
+Row {data-width = 650}
+-------------------------------------
+
+### Avg Miles travelled per vehicle
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Average_miles_traveled_per_vehicle_all_buses))
+  valueBox(value = A, icon = "", caption = "Miles traveled per vehicle", color = "pink")  
+})
+```
+
+### Fuel Consumed in Million Gallons
+
+```{r, echo=FALSE}
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Fuel_consumed_million_gallons_all_buses))
+  valueBox(value = A, icon = "", caption = "Fuel consumed in Million gallons", color = "red")  
+})
+```
+
+### Fuel Consumed per vehicle in gallons    
+
+```{r, echo=FALSE}
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Average_fuel_consumption_per_vehicle_gallons_all_buses))
+  valueBox(value = A, icon = "", caption = "Fuel consumed per vehicle in gallons", color = "blue")  
+})
+```
+
+### Avg Miles per gallon fuel (All Buses)
+
+```{r, echo=FALSE}
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Average_miles_traveled_per_gallon_of_fuel_consumed_all._buses))
+  valueBox(value = A, icon = "", caption = "Avg miles per gallon fuel", color = "black")  
+})
+```
+
+Row {data-width = 650}
+-------------------------------------
+### Fatalities per 10000 vehicles (buses)
+
+```{r, echo=FALSE}
+
+renderValueBox({
+  A <- as.numeric(df1  %>% filter(Year == input$Year) %>% select(Vehicle_fatal_Per_10000_registered_vehicles_all_buses))
+  valueBox(value = A, icon = "fa-institution", caption = "Fatalities per 10k Vehicles (Buses)", color = "navy")  
+})
+```
+
+
+Row {data-width = 500}
+-------------------------------------
+
+### Fatalities in Vehicular Accidents (Buses)
+
+```{r, echo=FALSE}
+renderPlot({
+  df1$Fatalities_vehicular_accidents_all_buses <- as.numeric(df1$Fatalities_vehicular_accidents_all_buses)
+  barplot(df1$Fatalities_vehicular_accidents_all_buses, 
+        main = "Fatalities in Vehicular Accidents (Buses)", 
+        names.arg = df1$Year, 
+        xlab = "Year", ylab = "Fatalities", las=2)
+})
+```
+
+
+### Public bus stop location in chicago city
+
+```{r, echo=FALSE}
+
+leaflet() %>%
+  addTiles() %>% 
+  setView(lng=	-87.623177, lat=41.881832, zoom = 16) %>%
+  addMarkers ( lng=geo$LONGITUDE, lat=geo$LATITUDE,popup= geo$Location)
+```
+
+```{r}
+# only display table for values in chunk 
+renderTable(
+  BicatYeast[which(res@RowxNumber[, num()]), which(res@NumberxCol[num(), ])]
+)
+```
+```{r}
+# only display table for values in chunk 
+renderTable(
+  BicatYeast[which(res@RowxNumber[, num()]), which(res@NumberxCol[num(), ])]
+)
+```
+
